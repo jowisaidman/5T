@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Input, Button, Icon} from 'react-native-elements';
 
 export default function RegisterForm() {
+    const [hidePassword, setHidePassword] = useState(true);
+    const [hideRepeatPassword, setHideRepeatPassword] = useState(true);
+
 
     const register = () => {
         console.log('usuario registrado')
@@ -26,28 +29,30 @@ export default function RegisterForm() {
             <Input 
                 placeholder='Contraseña'
                 password={true}
-                secureTextEntry={true}
+                secureTextEntry={hidePassword}
                 containerStyle={styles.inputForm}
                 onChange={() => console.log('contraseña actualziada')}
                 rightIcon={
                     <Icon 
                     type='material-community'
-                    name='eye-outline'
+                    name={hidePassword ? 'eye-outline' : 'eye-off-outline'}
                     iconStyle={styles.iconRight}
+                    onPress={() => setHidePassword(!hidePassword)}
                 />
                 }
             />
             <Input 
                 placeholder='Confirmar contraseña'
                 password={true}
-                secureTextEntry={true}
+                secureTextEntry={hideRepeatPassword}
                 containerStyle={styles.inputForm}
                 onChange={() => console.log('repetir contraseña actualziada')}
                 rightIcon={
                     <Icon 
                     type='material-community'
-                    name='eye-outline'
+                    name={hideRepeatPassword ? 'eye-outline' : 'eye-off-outline'}
                     iconStyle={styles.iconRight}
+                    onPress={() => setHideRepeatPassword(!hideRepeatPassword)}
                 />
                 }
             />
