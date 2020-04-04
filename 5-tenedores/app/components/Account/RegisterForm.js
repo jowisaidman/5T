@@ -1,14 +1,34 @@
 import React, { useState } from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Input, Button, Icon} from 'react-native-elements';
+import { validateEmail } from '../../utils/Validation';
+import * as firebase from 'firebase';
 
 export default function RegisterForm() {
     const [hidePassword, setHidePassword] = useState(true);
     const [hideRepeatPassword, setHideRepeatPassword] = useState(true);
+    //En este caso son pocos datos, solo 3 campos entonce uso 3 estados, sino se podria hacer un estado dinamico 
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [repeatPassword, setRepeatPassword] = useState("");
 
 
-    const register = () => {
-        console.log('usuario registrado')
+    const register = async () => {
+        if (!email || !password || !repeatPassword) {
+            console.log('completa todo');
+        } else if (!validateEmail(email)) {
+            console.log('Email invalivo');
+        } else if (password !== repeatPassword) {
+            console.log('las pass no coinciden');
+        } else {
+            await firebase.auth().createUserWithEmailAndPassword(email,password).
+            then(() => {
+                console.log('usuario creado');
+            })
+            .catch(() => {
+                console.log('Error');
+            })
+        }
     }
 
 
@@ -17,7 +37,7 @@ export default function RegisterForm() {
             <Input
                 placeholder='Correo Electronico'
                 containerStyle={styles.inputForm}
-                onChange={() => console.log('Email actualizado')}
+                onChange={e => setEmail(e.nativeEvent.text)}
                 rightIcon={
                     <Icon 
                         type='material-community'
@@ -31,7 +51,7 @@ export default function RegisterForm() {
                 password={true}
                 secureTextEntry={hidePassword}
                 containerStyle={styles.inputForm}
-                onChange={() => console.log('contraseña actualziada')}
+                onChange={e => setPassword(e.nativeEvent.text)}
                 rightIcon={
                     <Icon 
                     type='material-community'
@@ -46,7 +66,7 @@ export default function RegisterForm() {
                 password={true}
                 secureTextEntry={hideRepeatPassword}
                 containerStyle={styles.inputForm}
-                onChange={() => console.log('repetir contraseña actualziada')}
+                onChange={e =>setRepeatPassword(e.nativeEvent.text)}
                 rightIcon={
                     <Icon 
                     type='material-community'
