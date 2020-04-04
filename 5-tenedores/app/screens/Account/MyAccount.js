@@ -5,7 +5,6 @@ import Loading from '../../components/Loading';
 import UserGuest from './UserGuest';
 import UserLogged from './UserLogged';
 
-
 export default function MyAccount() {
     const [login, setLogin] = useState(null);
 
@@ -22,3 +21,5 @@ export default function MyAccount() {
 
     return login ? <UserLogged /> : <UserGuest />;
 }
+
+//toastRef.current.show('Usuario creado correctamente');

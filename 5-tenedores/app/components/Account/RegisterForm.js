@@ -2,33 +2,42 @@ import React, { useState } from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Input, Button, Icon} from 'react-native-elements';
 import { validateEmail } from '../../utils/Validation';
+import { withNavigation } from 'react-navigation';
 import * as firebase from 'firebase';
+import Loading from '../Loading';
 
-export default function RegisterForm() {
+function RegisterForm(props) {
+    const {toastRef, navigation} = props;
+
     const [hidePassword, setHidePassword] = useState(true);
     const [hideRepeatPassword, setHideRepeatPassword] = useState(true);
+
     //En este caso son pocos datos, solo 3 campos entonce uso 3 estados, sino se podria hacer un estado dinamico 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
 
+    const [isVisibleLoading, setIsVisibleLoading] = useState(false);
+
 
     const register = async () => {
+        setIsVisibleLoading(true);
         if (!email || !password || !repeatPassword) {
-            console.log('completa todo');
+            toastRef.current.show('Error: Todos los campos son obligatorios');
         } else if (!validateEmail(email)) {
-            console.log('Email invalivo');
+            toastRef.current.show('Error: Email invalivo');
         } else if (password !== repeatPassword) {
-            console.log('las pass no coinciden');
+            toastRef.current.show('Error: Las contraseñas no coinciden');
         } else {
             await firebase.auth().createUserWithEmailAndPassword(email,password).
             then(() => {
-                console.log('usuario creado');
+                navigation.navigate('MyAccount');
             })
             .catch(() => {
-                console.log('Error');
+                toastRef.current.show('Error: No fue posible crear la cuenta, intente mas tarde');
             })
         }
+        setIsVisibleLoading(false);
     }
 
 
@@ -82,10 +91,12 @@ export default function RegisterForm() {
                 buttonStyle={styles.btnRegister}
                 onPress={register}
             />
+            <Loading text='Creando Cuenta' isVisible={isVisibleLoading} />
         </View>
     );
 }
 
+export default withNavigation(RegisterForm);
 
 const styles = StyleSheet.create({
     formContainer: {
